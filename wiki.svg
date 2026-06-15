@@ -1,0 +1,571 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 1200 800" width="100%" height="100%"
+     style="background-color: var(--bg-color, #1e1e2e); font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;"
+     id="francoscopy-root">
+
+    <defs>
+        <filter id="shadow" x="-5%" y="-5%" width="115%" height="115%">
+            <feDropShadow dx="2" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+        </filter>
+    </defs>
+
+    <!-- Barre du haut -->
+    <g id="ui-topbar">
+        <rect x="0" y="0" width="1200" height="50" fill="var(--primary-color, #ff6b6b)" />
+        <text id="main-title-text" x="20" y="33" font-size="24" font-weight="bold" fill="#ffffff" font-family="monospace">Francoscopy</text>
+
+        <g id="btn-canvas" onclick="switchView('canvas')" style="cursor: pointer;">
+            <rect x="890" y="10" width="100" height="30" rx="5" fill="#ffffff" fill-opacity="0.2"/>
+            <text x="915" y="30" font-size="14" fill="#ffffff">Canvas</text>
+        </g>
+        <g id="btn-pages" onclick="switchView('pages')" style="cursor: pointer;">
+            <rect x="1000" y="10" width="100" height="30" rx="5" fill="#ffffff" fill-opacity="0.2"/>
+            <text x="1030" y="30" font-size="14" fill="#ffffff">Pages</text>
+        </g>
+        <g id="btn-settings" onclick="switchView('settings')" style="cursor: pointer;">
+            <rect x="1110" y="10" width="80" height="30" rx="5" fill="#ffffff" fill-opacity="0.2"/>
+            <text x="1120" y="30" font-size="14" fill="#ffffff">⚙</text>
+        </g>
+    </g>
+
+    <!-- VUE CANVAS -->
+    <g id="view-canvas" transform="translate(0, 50)">
+        <g onclick="showAllPages()" style="cursor: pointer;" transform="translate(1080, 10)">
+            <rect x="0" y="0" width="100" height="30" rx="5" fill="rgba(255,255,255,0.1)"/>
+            <text x="10" y="20" font-size="13" fill="#ffffff">👁 Tout voir</text>
+        </g>
+    </g>
+
+    <!-- VUE PAGES -->
+    <g id="view-pages" transform="translate(0, 50)" visibility="hidden">
+        <foreignObject x="0" y="0" width="1200" height="750">
+            <div xmlns="http://www.w3.org/1999/xhtml" id="pages-container" style="background: var(--bg-color, #1e1e2e); color: var(--text-color, #ffffff); height: 100%; padding: 30px; box-sizing: border-box; overflow-y: auto; font-family: 'Segoe UI', sans-serif;">
+                <div style="margin-bottom: 20px; display: flex; gap: 15px; align-items: center;">
+                    <input type="text" id="search-input" placeholder="🔍 Rechercher dans le wiki..." oninput="searchWiki(this.value)" style="flex:1; padding: 12px; font-size: 16px; background: #12121a; color: white; border: 1px solid #555; border-radius: 6px; outline: none;"/>
+                </div>
+                <div id="pages-grid" style="display:flex;flex-wrap:wrap;gap:20px;"></div>
+            </div>
+        </foreignObject>
+    </g>
+
+    <!-- VUE ÉDITEUR -->
+    <g id="view-editor" transform="translate(0, 50)" visibility="hidden">
+        <foreignObject x="0" y="0" width="250" height="750">
+            <div xmlns="http://www.w3.org/1999/xhtml" id="editor-sidebar" style="background: var(--sidebar-bg, #2d2d44); color: var(--text-color, #ffffff); height: 100%; padding: 20px; box-sizing: border-box; overflow-y: auto; font-family: 'Segoe UI', sans-serif;">
+            </div>
+        </foreignObject>
+
+        <foreignObject x="250" y="0" width="950" height="750">
+            <div xmlns="http://www.w3.org/1999/xhtml" style="background: var(--editor-bg, #1e1e2e); color: var(--text-color, #ffffff); height: 100%; display: flex; flex-direction: column; font-family: 'Segoe UI', sans-serif;">
+
+                <div style="background: #2a2a40; padding: 12px 20px; display: flex; align-items: center; gap: 15px; border-bottom: 2px solid var(--primary-color, #ff6b6b); flex-wrap: wrap;">
+                    <span style="font-size: 15px; font-weight: bold;">🎨 Apparence</span>
+                    <label style="font-size: 13px;">Fond :</label>
+                    <input type="color" id="set-page-bg" value="#2d2d44" onchange="updatePageBg()" style="cursor: pointer; width: 30px; height: 30px; border: 2px solid #fff; padding: 0; border-radius: 4px;"/>
+                    <input type="range" id="set-page-opacity" min="0" max="1" step="0.05" value="1" oninput="updatePageBg()" style="cursor: pointer; width: 70px;" title="Opacité du fond"/>
+                    <span id="opacity-val" style="font-size: 12px; width: 25px;">1</span>
+                    <label style="font-size: 13px; margin-left: 10px;">Titre :</label>
+                    <input type="color" id="set-page-title-bg" value="#ff6b6b" onchange="updatePageTitleBg()" style="cursor: pointer; width: 30px; height: 30px; border: 2px solid #fff; padding: 0; border-radius: 4px;"/>
+                </div>
+
+                <div style="display: flex; flex: 1; overflow: hidden;">
+                    <textarea id="wiki-input" oninput="renderWiki()" style="width: 50%; height: 100%; background: #12121a; color: #a9b7c6; border: none; padding: 20px; font-family: monospace; font-size: 14px; resize: none; box-sizing: border-box; outline: none;"></textarea>
+                    <div id="wiki-output" style="width: 50%; height: 100%; padding: 20px; overflow-y: auto; background: var(--editor-bg, #1e1e2e); box-sizing: border-box;"></div>
+                </div>
+            </div>
+        </foreignObject>
+    </g>
+
+    <!-- VUE PARAMÈTRES -->
+    <g id="view-settings" transform="translate(0, 50)" visibility="hidden">
+        <foreignObject x="350" y="50" width="500" height="750">
+            <div xmlns="http://www.w3.org/1999/xhtml" style="background: var(--sidebar-bg, #2d2d44); color: var(--text-color, #ffffff); padding: 30px; border-radius: 10px; font-family: 'Segoe UI', sans-serif;">
+                <h2 style="margin-top:0;">Paramètres</h2>
+                <div style="margin-bottom: 20px;">
+                    <label style="display:block; margin-bottom:5px;">Titre de l'application :</label>
+                    <input type="text" id="set-app-title" value="Francoscopy" oninput="updateAppTitle(this.value)" style="width: 100%; padding: 8px; background: #12121a; color: #fff; border: 1px solid #555; border-radius: 4px; font-size: 16px; font-weight: bold; box-sizing: border-box;"/>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display:block; margin-bottom:5px;">Couleur Principale :</label>
+                    <input type="color" id="set-primary" value="#ff6b6b" onchange="updateSetting('--primary-color', this.value)" />
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display:block; margin-bottom:5px;">Couleur de fond :</label>
+                    <input type="color" id="set-bg" value="#1e1e2e" onchange="updateSetting('--bg-color', this.value)" />
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display:block; margin-bottom:5px;">Couleur du texte :</label>
+                    <input type="color" id="set-text" value="#ffffff" onchange="updateSetting('--text-color', this.value)" />
+                </div>
+                <div style="margin-top: 40px; border-top: 1px solid #555; padding-top: 20px;">
+                    <h2>Sauvegarde locale</h2>
+                    <p style="font-size: 13px; color: #aaa;">Le Wiki se sauvegarde automatiquement. Exportez pour archiver.</p>
+                    <input type="file" id="import-file-input" accept=".json" onchange="handleImport(event)" style="display: none;" />
+                    <div style="display: flex; gap: 15px; margin-top: 15px;">
+                        <button onclick="exportWiki()" style="flex:1; padding: 12px; background: #4caf50; border: none; color: white; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 14px;">⬇ Exporter</button>
+                        <button onclick="triggerImport()" style="flex:1; padding: 12px; background: #2196f3; border: none; color: white; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 14px;">⬆ Importer</button>
+                    </div>
+                    <button onclick="resetWiki()" style="width:100%;margin-top:20px;padding: 12px; background: #d32f2f; border: none; color: white; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 14px;">⚠ Réinitialiser le Wiki</button>
+                </div>
+            </div>
+        </foreignObject>
+    </g>
+
+    <!-- Librairies -->
+    <script xlink:href="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script xlink:href="https://cdn.jsdelivr.net/npm/minisearch/dist/umd/index.min.js"></script>
+    <script xlink:href="https://cdn.jsdelivr.net/npm/localforage/dist/localforage.min.js"></script>
+    <script xlink:href="https://cdn.jsdelivr.net/npm/deep-diff/dist/deep-diff.min.js"></script>
+
+    <script type="text/ecmascript"><![CDATA[
+
+        var wikiData = {
+        "Accueil": { content: "== Bienvenue | Page Principale ==\nCeci est un Wiki personnel au format SVG.\n\n@Auteur: Francoscopy\n@Version: 2.0\n\nFonctionnalités :\n* Recherche plein texte\n* **Markdown** complet\n* Sauvegarde automatique\n\n[[Concepts]] | [[Syntaxe]]\n\n!https://upload.wikimedia.org/wikipedia/commons/4/4f/SVG_Logo.svg!", bgHex: "#2d2d44", bgAlpha: 1, titleHex: "#ff6b6b" },
+        "Concepts": { content: "== Concepts Clés | Architecture ==\n* **SVG** : Format vectoriel exceptionnel.\n* **Librairies** : Intégration de `marked.js` et `minisearch`.\n\nRetour à l'[[Accueil]]", bgHex: "#1a3a4a", bgAlpha: 1, titleHex: "#00bcd4" },
+        "Syntaxe":  { content: "== Syntaxe | Guide de rédaction ==\n* Titres : `== Titre | Sous-titre ==`\n* Attributs : `@clé: valeur`\n* Gras : `**texte**`, Italique : `*texte*`\n* Code : `` `code` ``\n* Listes : `- item`\n* Images : `!url_image!`\n* Liens : `[[Nom de la page]]`\n\nRetour à l'[[Accueil]]", bgHex: "#3a1a4a", bgAlpha: 0.9, titleHex: "#9c27b0" }
+        };
+
+        var currentPage = "Accueil";
+        var blockStates = {};
+        var historyStack = [];
+        var miniSearch = null;
+
+        function ensureDataIntegrity(data) {
+        if (!data || !data.wikiData) return;
+        for (var page in data.wikiData) {
+        var pg = data.wikiData[page];
+        if (typeof pg.content === 'undefined') pg.content = "";
+        if (typeof pg.bgHex === 'undefined') pg.bgHex = "#2d2d44";
+        if (typeof pg.bgAlpha === 'undefined') pg.bgAlpha = 1;
+        if (typeof pg.titleHex === 'undefined') pg.titleHex = "#ff6b6b";
+        if (!data.blockStates) data.blockStates = {};
+        if (!data.blockStates[page]) {
+        var i = Object.keys(data.wikiData).indexOf(page);
+        data.blockStates[page] = { x: 50 + (i % 3) * 350, y: 50 + Math.floor(i / 3) * 260, w: 300, h: 220, visible: true };
+        }
+        if (typeof data.blockStates[page].visible === 'undefined') data.blockStates[page].visible = true;
+        }
+        }
+
+        async function initFrancoscopy() {
+        try {
+        var savedData = await localforage.getItem('francoscopy-data');
+        if (savedData) {
+        ensureDataIntegrity(savedData);
+        wikiData = savedData.wikiData;
+        blockStates = savedData.blockStates;
+
+        // Restauration du titre
+        if(savedData.appTitle) {
+        updateAppTitle(savedData.appTitle);
+        document.getElementById("set-app-title").value = savedData.appTitle;
+        }
+
+        // CORRECTION : Restauration des paramètres d'interface (couleurs)
+        if(savedData.uiSettings) {
+        if(savedData.uiSettings.primaryColor) {
+        updateSetting('--primary-color', savedData.uiSettings.primaryColor);
+        document.getElementById("set-primary").value = savedData.uiSettings.primaryColor;
+        }
+        if(savedData.uiSettings.bgColor) {
+        updateSetting('--bg-color', savedData.uiSettings.bgColor);
+        document.getElementById("set-bg").value = savedData.uiSettings.bgColor;
+        }
+        if(savedData.uiSettings.textColor) {
+        updateSetting('--text-color', savedData.uiSettings.textColor);
+        document.getElementById("set-text").value = savedData.uiSettings.textColor;
+        }
+        }
+        }
+        } catch (err) { console.error("Erreur localForage :", err); }
+
+        indexWiki();
+        switchView('canvas');
+        }
+
+        function indexWiki() {
+        miniSearch = new MiniSearch({ fields: ['title', 'content'], storeFields: ['title'] });
+        var documents = [];
+        for (var page in wikiData) documents.push({ id: page, title: page, content: wikiData[page].content });
+        miniSearch.addAll(documents);
+        }
+
+        function searchWiki(query) {
+        var grid = document.getElementById('pages-grid');
+        if (!query || query.trim() === "") { renderPagesGrid(grid, null); return; }
+        var results = miniSearch.search(query, { prefix: true, fuzzy: 0.2 });
+        renderPagesGrid(grid, results.map(r => r.id));
+        }
+
+        function parseWiki(text) {
+        if(!text) return "";
+        var html = text;
+        html = html.replace(/== (.+?) ==/g, function(match, p1) {
+        var parts = p1.split('|');
+        var title = parts[0].trim();
+        var subtitle = parts[1] ? '<span style="display:block;font-size:0.6em;opacity:0.7;font-weight:normal;margin-top:2px;">' + parts[1].trim() + '</span>' : '';
+        return '<h1 style="margin:0 0 5px 0; color: var(--primary-color, #ff6b6b); font-size:14px; border-bottom:1px solid #555; padding-bottom:5px;">' + title + subtitle + '</h1>';
+        });
+        html = html.replace(/@([^:]+):(.+)/g, function(match, p1, p2) {
+        return '<div style="background:rgba(255,255,255,0.05);padding:4px 8px;border-radius:4px;font-size:11px;margin:4px 0;border-left:3px solid var(--primary-color, #ff6b6b);"><strong>' + p1.trim() + ':</strong> ' + p2.trim() + '</div>';
+        });
+        html = html.replace(/!([^\s!]+)!/g, function(match, p1) {
+        return '<img crossorigin="anonymous" src="' + p1.replace(/"/g, '&quot;') + '" style="max-width:100%;border-radius:4px;display:block;margin:5px auto;" onerror="this.style.display=\'none\'" />';
+        });
+        html = html.replace(/\[\[(.+?)\]\]/g, function(match, p1) {
+        return '<a href="#" onclick="event.preventDefault(); currentPage=\'' + p1.replace(/'/g, "\\'") + '\'; switchView(\'editor\');" style="color: var(--primary-color, #ff6b6b); cursor: pointer; text-decoration: underline;">' + p1 + '</a>';
+        });
+        return marked.parse(html, { breaks: true, gfm: true });
+        }
+
+        var saveTimeout;
+        function scheduleSave() {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(function() {
+
+        // CORRECTION : Sauvegarde des paramètres d'interface
+        var uiSettings = {
+        primaryColor: document.getElementById("set-primary").value,
+        bgColor: document.getElementById("set-bg").value,
+        textColor: document.getElementById("set-text").value
+        };
+
+        localforage.setItem('francoscopy-data', {
+        wikiData: wikiData,
+        blockStates: blockStates,
+        appTitle: document.getElementById("main-title-text").textContent,
+        uiSettings: uiSettings
+        });
+        }, 1000);
+        }
+
+        function pushHistory() {
+        var snapshot = JSON.parse(JSON.stringify(wikiData));
+        if (historyStack.length > 30) historyStack.shift();
+        historyStack.push(snapshot);
+        }
+
+        document.addEventListener("keydown", function(evt) {
+        if (evt.ctrlKey && evt.key === 'z') {
+        evt.preventDefault();
+        if (historyStack.length > 1) {
+        historyStack.pop();
+        wikiData = JSON.parse(JSON.stringify(historyStack[historyStack.length - 1]));
+        if(!wikiData[currentPage]) currentPage = Object.keys(wikiData)[0];
+        scheduleSave(); indexWiki(); loadEditor(currentPage); renderCanvas();
+        }
+        }
+        });
+
+        function getSvgRatio() {
+        var svgRoot = document.getElementById("francoscopy-root");
+        if (!svgRoot.clientWidth) return 1;
+        return svgRoot.viewBox.baseVal.width / svgRoot.clientWidth;
+        }
+
+        function switchView(viewName) {
+        var views = ["canvas", "pages", "editor", "settings"];
+        for(var i=0; i<views.length; i++) document.getElementById("view-" + views[i]).setAttribute("visibility", "hidden");
+            document.getElementById("view-" + viewName).setAttribute("visibility", "visible");
+            if(viewName === "canvas") renderCanvas();
+            if(viewName === "editor") loadEditor(currentPage);
+            if(viewName === "pages") renderPagesView();
+            }
+
+            function updateSetting(varName, value) { document.getElementById("francoscopy-root").style.setProperty(varName, value); scheduleSave(); }
+            function updateAppTitle(newTitle) { document.getElementById("main-title-text").textContent = newTitle; scheduleSave(); }
+
+            function hexToRgba(hex, alpha) {
+            if(!hex) return "rgba(0,0,0,"+alpha+")";
+            var r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+            return "rgba(" + r + "," + g + "," + b + "," + alpha + ")";
+            }
+
+            function showAllPages() {
+            for (var page in blockStates) blockStates[page].visible = true;
+            scheduleSave(); renderCanvas();
+            }
+
+            function resetWiki() {
+            if(confirm("Attention : Cela va effacer toutes vos pages et réinitialiser l'application. Continuer ?")) {
+            localforage.removeItem('francoscopy-data').then(function() { location.reload(); });
+            }
+            }
+
+            function deletePage(pageName) {
+            if (!confirm("Supprimer définitivement la page '" + pageName + "' ?")) return;
+            pushHistory();
+            delete wikiData[pageName];
+            delete blockStates[pageName];
+            if (currentPage === pageName) {
+            var keys = Object.keys(wikiData);
+            currentPage = keys.length > 0 ? keys[0] : "";
+            }
+            indexWiki(); scheduleSave(); renderPagesView(); renderCanvas(); updatePageList();
+            }
+
+            function renderPagesView() { searchWiki(document.getElementById("search-input").value); }
+
+            function renderPagesGrid(container, filteredIds) {
+            var html = '<div onclick="createNewPage()" style="background:rgba(255,255,255,0.05);width:250px;padding:20px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--primary-color, #ff6b6b);border:2px dashed var(--primary-color, #ff6b6b);">+ Nouvelle</div>';
+
+            for (var page in wikiData) {
+            if (filteredIds && !filteredIds.includes(page)) continue;
+            var state = blockStates[page];
+            var isVisible = state ? state.visible : true;
+            var statusColor = isVisible ? "#4caf50" : "#f44336";
+            var statusText = isVisible ? "Sur le Canvas" : "Cachée";
+            var actionOnclick = isVisible ? "blockStates['" + page + "'].visible = false; renderPagesView(); renderCanvas(); scheduleSave();" : "blockStates['" + page + "'].visible = true; renderPagesView(); renderCanvas(); scheduleSave();";
+            var actionText = isVisible ? "Masquer" : "Restaurer";
+            var safeName = page.replace(/'/g, "\\'");
+
+            html += '<div style="background:var(--sidebar-bg, #2d2d44);width:250px;padding:20px;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.3);border-top: 5px solid ' + (wikiData[page].titleHex || '#ff6b6b') + ';">';
+                html += '<h3 style="margin:0 0 10px 0;">' + page + '</h3>';
+                html += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:15px;"><div style="width:8px;height:8px;border-radius:50%;background:' + statusColor + ';"></div><span style="font-size:12px;opacity:0.8;">' + statusText + '</span></div>';
+                html += '<div style="display:flex;gap:10px;">';
+                    html += '<button onclick="currentPage=\'' + safeName + '\'; switchView(\'editor\')" style="flex:1;padding:6px;background:#555;border:none;color:#fff;border-radius:4px;cursor:pointer;">Éditer</button>';
+                    html += '<button onclick="' + actionOnclick + '" style="flex:1;padding:6px;background:' + statusColor + ';border:none;color:#fff;border-radius:4px;cursor:pointer;">' + actionText + '</button>';
+                    html += '</div>';
+                html += '<button onclick="deletePage(\'' + safeName + '\')" style="width:100%;margin-top:10px;padding:6px;background:#d32f2f;border:none;color:#fff;border-radius:4px;cursor:pointer;font-size:12px;">🗑 Supprimer</button>';
+                html += '</div>';
+            }
+            container.innerHTML = html;
+            }
+
+            // --- ÉDITEUR ---
+            function loadEditor(pageName) {
+            if(!wikiData[pageName]) {
+            var keys = Object.keys(wikiData);
+            if(keys.length === 0) return;
+            pageName = keys[0];
+            }
+            currentPage = pageName;
+
+            var data = wikiData[pageName];
+            document.getElementById("wiki-input").value = data.content;
+            document.getElementById("set-page-bg").value = data.bgHex;
+            document.getElementById("set-page-opacity").value = data.bgAlpha;
+            document.getElementById("opacity-val").textContent = data.bgAlpha;
+            document.getElementById("set-page-title-bg").value = data.titleHex || "#ff6b6b";
+
+            renderWiki();
+            updatePageList();
+            }
+
+            function updatePageBg() {
+            var hex = document.getElementById("set-page-bg").value;
+            var alpha = document.getElementById("set-page-opacity").value;
+            document.getElementById("opacity-val").textContent = alpha;
+            wikiData[currentPage].bgHex = hex;
+            wikiData[currentPage].bgAlpha = alpha;
+            var blockId = "block-" + currentPage.replace(/\s+/g, '-');
+            var svgBlock = document.getElementById(blockId);
+            if (svgBlock) {
+            svgBlock.querySelector('.bg-rect').setAttribute('fill', hexToRgba(hex, alpha));
+            svgBlock.querySelector('.canvas-color-picker').value = hex;
+            }
+            scheduleSave();
+            }
+
+            function updatePageTitleBg() {
+            var hex = document.getElementById("set-page-title-bg").value;
+            wikiData[currentPage].titleHex = hex;
+            var blockId = "block-" + currentPage.replace(/\s+/g, '-');
+            var svgBlock = document.getElementById(blockId);
+            if (svgBlock) {
+            svgBlock.querySelector('.title-rect').setAttribute('fill', hex);
+            svgBlock.querySelector('.title-cover').setAttribute('fill', hex);
+            }
+            scheduleSave();
+            }
+
+            function renderWiki() {
+            var input = document.getElementById("wiki-input").value;
+            var output = document.getElementById("wiki-output");
+            pushHistory();
+            wikiData[currentPage].content = input;
+            output.innerHTML = parseWiki(input);
+            if(miniSearch && miniSearch.documentStore.has(currentPage)) miniSearch.replace({ id: currentPage, title: currentPage, content: input });
+            else if (miniSearch) miniSearch.add({ id: currentPage, title: currentPage, content: input });
+            scheduleSave();
+            }
+
+            function updatePageList() {
+            var container = document.getElementById("editor-sidebar");
+            if (!container) return;
+
+            var html = '<h3 style="margin-top:0; border-bottom: 1px solid #444; padding-bottom:10px;">Navigation rapide</h3>';
+            html += '<ul style="list-style: none; padding: 0;">';
+
+                for (var page in wikiData) {
+                var isActive = page === currentPage;
+                var color = isActive ? "#ffffff" : "#aaaaaa";
+                var weight = isActive ? "bold" : "normal";
+                var safeName = page.replace(/'/g, "\\'");
+                html += '<li style="margin-bottom: 10px; padding: 5px; background: ' + (isActive ? 'rgba(255,255,255,0.1)' : 'transparent') + '; border-radius: 4px;">';
+                    html += '<a href="#" onclick="event.preventDefault(); loadEditor(\'' + safeName + '\')" style="color: ' + color + '; text-decoration: none; font-weight: ' + weight + '; cursor: pointer; display: block;">' + page + '</a>';
+                    html += '</li>';
+                }
+
+                html += '</ul>';
+            html += '<button onclick="createNewPage()" style="margin-top: 20px; width:100%; padding: 8px; background: var(--primary-color, #ff6b6b); border: none; color: white; cursor: pointer; border-radius: 4px;">+ Nouvelle Page</button>';
+
+            container.innerHTML = html;
+            }
+
+            function createNewPage() {
+            var name = prompt("Nom de la nouvelle page :", "Nouvelle Page");
+            if (name && !wikiData[name]) {
+            pushHistory();
+            wikiData[name] = { content: "== " + name + " ==\n\nContenu à rédiger.", bgHex: "#2d2d44", bgAlpha: 1, titleHex: document.getElementById("set-primary").value };
+            initBlockState(name); indexWiki(); loadEditor(name);
+            }
+            }
+
+            // --- IMPORT / EXPORT ---
+            function getFormattedDate() { var d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, '0') + "-" + String(d.getDate()).padStart(2, '0'); }
+            function exportWiki() {
+            var currentAppTitle = document.getElementById("main-title-text").textContent;
+            var fileName = prompt("Nom du fichier d'export :", "wiki-" + getFormattedDate() + "-" + currentAppTitle.replace(/\s+/g, ''));
+            if (!fileName) return; if (!fileName.endsWith(".json")) fileName += ".json";
+
+            var uiSettings = {
+            primaryColor: document.getElementById("set-primary").value,
+            bgColor: document.getElementById("set-bg").value,
+            textColor: document.getElementById("set-text").value
+            };
+
+            var data = { wikiData: wikiData, blockStates: blockStates, appTitle: currentAppTitle, uiSettings: uiSettings };
+            var blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }); var url = URL.createObjectURL(blob);
+            var a = document.createElementNS("http://www.w3.org/1999/xhtml", "a"); a.href = url; a.download = fileName;
+            document.documentElement.appendChild(a); a.click(); document.documentElement.removeChild(a);
+            setTimeout(function() { URL.revokeObjectURL(url); }, 100);
+            }
+            function triggerImport() { document.getElementById("import-file-input").click(); }
+            function handleImport(event) {
+            var file = event.target.files[0]; if (!file) return; var reader = new FileReader();
+            reader.onload = function(e) {
+            try {
+            var data = JSON.parse(e.target.result);
+            if(data.wikiData && data.blockStates) {
+            ensureDataIntegrity(data);
+            pushHistory(); wikiData = data.wikiData; blockStates = data.blockStates;
+            if(data.appTitle) { updateAppTitle(data.appTitle); document.getElementById("set-app-title").value = data.appTitle; }
+            if(data.uiSettings) {
+            if(data.uiSettings.primaryColor) { updateSetting('--primary-color', data.uiSettings.primaryColor); document.getElementById("set-primary").value = data.uiSettings.primaryColor; }
+            if(data.uiSettings.bgColor) { updateSetting('--bg-color', data.uiSettings.bgColor); document.getElementById("set-bg").value = data.uiSettings.bgColor; }
+            if(data.uiSettings.textColor) { updateSetting('--text-color', data.uiSettings.textColor); document.getElementById("set-text").value = data.uiSettings.textColor; }
+            }
+            if(!wikiData[currentPage]) currentPage = Object.keys(wikiData)[0];
+            indexWiki(); scheduleSave(); switchView('canvas'); alert("Wiki importé avec succès !");
+            } else { alert("Format invalide."); }
+            } catch (err) { alert("Erreur : " + err.message); }
+            }; reader.readAsText(file); event.target.value = "";
+            }
+
+            // --- CANVAS & BLOCS ---
+            function initBlockState(page) {
+            var i = Object.keys(wikiData).indexOf(page);
+            if (!blockStates[page]) blockStates[page] = { x: 50 + (i % 3) * 350, y: 50 + Math.floor(i / 3) * 260, w: 300, h: 220, visible: true };
+            }
+            function renderCanvas() {
+            var canvasGroup = document.getElementById("view-canvas");
+            var showAllBtn = canvasGroup.querySelector('g[onclick="showAllPages()"]');
+            while (canvasGroup.firstChild) canvasGroup.removeChild(canvasGroup.firstChild);
+            if(showAllBtn) canvasGroup.appendChild(showAllBtn);
+            for (var page in wikiData) { initBlockState(page); if (blockStates[page].visible) createBlock(canvasGroup, page, blockStates[page]); }
+            }
+
+            function createBlock(parent, title, state) {
+            var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            g.setAttribute("id", "block-" + title.replace(/\s+/g, '-'));
+            g.setAttribute("transform", "translate(" + state.x + "," + state.y + ")");
+            var bgColor = hexToRgba(wikiData[title].bgHex, wikiData[title].bgAlpha);
+            var titleColor = wikiData[title].titleHex || "#ff6b6b";
+
+            var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect"); rect.classList.add("bg-rect");
+            rect.setAttribute("width", state.w); rect.setAttribute("height", state.h); rect.setAttribute("rx", "10");
+            rect.setAttribute("fill", bgColor); rect.setAttribute("filter", "url(#shadow)"); g.appendChild(rect);
+
+            var titleRectCover = document.createElementNS("http://www.w3.org/2000/svg", "rect"); titleRectCover.classList.add("title-cover");
+            titleRectCover.setAttribute("width", state.w); titleRectCover.setAttribute("y", "15"); titleRectCover.setAttribute("height", "15");
+            titleRectCover.setAttribute("fill", titleColor); g.appendChild(titleRectCover);
+
+            var titleRect = document.createElementNS("http://www.w3.org/2000/svg", "rect"); titleRect.classList.add("title-rect");
+            titleRect.setAttribute("width", state.w); titleRect.setAttribute("height", "30"); titleRect.setAttribute("rx", "10");
+            titleRect.setAttribute("fill", titleColor); g.appendChild(titleRect);
+
+            var foColor = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
+            foColor.setAttribute("x", state.w - 65); foColor.setAttribute("y", "2"); foColor.setAttribute("width", "30"); foColor.setAttribute("height", "26");
+            var colorDiv = document.createElementNS("http://www.w3.org/1999/xhtml", "div"); colorDiv.style.cssText="width:100%;height:100%";
+            var colorInput = document.createElementNS("http://www.w3.org/1999/xhtml", "input"); colorInput.classList.add("canvas-color-picker");
+            colorInput.setAttribute("type", "color"); colorInput.setAttribute("value", wikiData[title].bgHex);
+            colorInput.style.cssText="width:100%;height:100%;border:2px solid rgba(255,255,255,0.6);border-radius:4px;padding:0;cursor:pointer;background:transparent;box-sizing:border-box";
+            colorInput.addEventListener("mousedown", function(evt){ evt.stopPropagation(); });
+            colorInput.addEventListener("input", function(evt) {
+            evt.stopPropagation(); wikiData[title].bgHex = this.value;
+            g.querySelector('.bg-rect').setAttribute('fill', hexToRgba(this.value, wikiData[title].bgAlpha));
+            scheduleSave();
+            });
+            colorDiv.appendChild(colorInput); foColor.appendChild(colorDiv); g.appendChild(foColor);
+
+            var closeGroup = document.createElementNS("http://www.w3.org/2000/svg", "g"); closeGroup.classList.add("close-btn");
+            closeGroup.setAttribute("transform", "translate(" + (state.w - 30) + ", 5)"); closeGroup.style.cursor = "pointer";
+            var closeCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle"); closeCircle.setAttribute("cx", "10"); closeCircle.setAttribute("cy", "10"); closeCircle.setAttribute("r", "10"); closeCircle.setAttribute("fill", "#ffffff"); closeCircle.setAttribute("fill-opacity", "0.3");
+            var closeX = document.createElementNS("http://www.w3.org/2000/svg", "text"); closeX.setAttribute("x", "10"); closeX.setAttribute("y", "15"); closeX.setAttribute("text-anchor", "middle"); closeX.setAttribute("font-size", "14"); closeX.setAttribute("font-weight", "bold"); closeX.setAttribute("fill", "#ffffff"); closeX.setAttribute("pointer-events", "none"); closeX.textContent = "X";
+            closeGroup.appendChild(closeCircle); closeGroup.appendChild(closeX); g.appendChild(closeGroup);
+            closeGroup.addEventListener("mousedown", function(evt) { evt.stopPropagation(); blockStates[title].visible = false; renderCanvas(); scheduleSave(); });
+
+            var titleText = document.createElementNS("http://www.w3.org/2000/svg", "text"); titleText.setAttribute("x", "15"); titleText.setAttribute("y", "22"); titleText.setAttribute("fill", "#ffffff"); titleText.setAttribute("font-weight", "bold"); titleText.setAttribute("font-size", "14"); titleText.setAttribute("pointer-events", "none"); titleText.textContent = title; g.appendChild(titleText);
+
+            var fo = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject"); fo.classList.add("content-fo"); fo.setAttribute("x", "10"); fo.setAttribute("y", "35"); fo.setAttribute("width", state.w - 20); fo.setAttribute("height", state.h - 45);
+            var div = document.createElementNS("http://www.w3.org/1999/xhtml", "div"); div.style.cssText="color:var(--text-color);font-family:'Segoe UI',sans-serif;font-size:12px;line-height:1.4;height:100%;box-sizing:border-box;word-wrap:break-word;overflow-y:auto;overflow-x:hidden;background:transparent";
+            div.innerHTML = parseWiki(wikiData[title].content); fo.appendChild(div); g.appendChild(fo);
+
+            var resizeHandle = document.createElementNS("http://www.w3.org/2000/svg", "rect"); resizeHandle.classList.add("resize-handle"); resizeHandle.setAttribute("x", state.w - 15); resizeHandle.setAttribute("y", state.h - 15); resizeHandle.setAttribute("width", "15"); resizeHandle.setAttribute("height", "15"); resizeHandle.setAttribute("fill", "transparent"); resizeHandle.setAttribute("cursor", "nwse-resize"); g.appendChild(resizeHandle);
+
+            setupResize(resizeHandle, g, title, state);
+            g.addEventListener("dblclick", function() { currentPage = title; switchView('editor'); });
+            setupDrag(g, title, state);
+            parent.appendChild(g);
+            }
+
+            function updateBlockVisuals(g, state) {
+            g.querySelector('.bg-rect').setAttribute('width', state.w); g.querySelector('.bg-rect').setAttribute('height', state.h);
+            g.querySelector('.title-rect').setAttribute('width', state.w); g.querySelector('.title-cover').setAttribute('width', state.w);
+            g.querySelector('.close-btn').setAttribute('transform', 'translate(' + (state.w - 30) + ', 5)');
+            g.querySelector('.content-fo').setAttribute('width', state.w - 20); g.querySelector('.content-fo').setAttribute('height', state.h - 45);
+            g.querySelector('.resize-handle').setAttribute('x', state.w - 15); g.querySelector('.resize-handle').setAttribute('y', state.h - 15);
+            var foColor = g.querySelector('.canvas-color-picker').parentNode.parentNode; foColor.setAttribute('x', state.w - 65);
+            }
+
+            function setupDrag(elem, pageName, state) {
+            var isDragging = false, startEvt = null, startPos = null;
+            elem.addEventListener("mousedown", function(evt) {
+            if(evt.target.classList.contains("resize-handle") || evt.target.closest(".close-btn") || evt.target.classList.contains("canvas-color-picker")) return;
+            if(evt.button !== 0) return; isDragging = true; startEvt = evt; startPos = { x: state.x, y: state.y }; elem.style.cursor = "grabbing"; evt.preventDefault();
+            });
+            document.addEventListener("mousemove", function(evt) {
+            if (!isDragging) return; var ratio = getSvgRatio();
+            state.x = startPos.x + (evt.clientX - startEvt.clientX) * ratio; state.y = startPos.y + (evt.clientY - startEvt.clientY) * ratio;
+            elem.setAttribute("transform", "translate(" + state.x + "," + state.y + ")");
+            });
+            document.addEventListener("mouseup", function(evt) { if (!isDragging) return; isDragging = false; elem.style.cursor = "grab"; scheduleSave(); });
+            }
+
+            function setupResize(handle, g, pageName, state) {
+            var isResizing = false, startEvt = null, startDims = null;
+            handle.addEventListener("mousedown", function(evt) { isResizing = true; startEvt = evt; startDims = { w: state.w, h: state.h }; evt.stopPropagation(); evt.preventDefault(); });
+            document.addEventListener("mousemove", function(evt) {
+            if (!isResizing) return; var ratio = getSvgRatio();
+            state.w = Math.max(200, startDims.w + (evt.clientX - startEvt.clientX) * ratio); state.h = Math.max(100, startDims.h + (evt.clientY - startEvt.clientY) * ratio);
+            updateBlockVisuals(g, state);
+            });
+            document.addEventListener("mouseup", function(evt) { if (!isResizing) return; isResizing = false; scheduleSave(); });
+            }
+
+            initFrancoscopy();
+
+            ]]></script>
+    </svg>
