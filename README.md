@@ -1,8 +1,9 @@
 📝 Francoscopy
-
 Un Wiki personnel moderne, entièrement contenu dans un fichier SVG.
 
 Francoscopy est une application de prise de notes et de gestion de connaissances (PKM) qui repousse les limites du format SVG. Pas de serveur, pas de base de données, pas de build Webpack/Vite : juste un seul fichier .svg que vous ouvrez dans votre navigateur.
+
+LicenseFormatSize
 
 ✨ Fonctionnalités
 🗺️ Le Canvas Spatial
@@ -51,10 +52,18 @@ Espace de noms XML : Le contenu HTML injecté doit impérativement porter le nam
 Héritage CSS : Le HTML dans un foreignObject n'hérite pas des styles CSS du parent SVG. Les polices et couleurs doivent être réinitialisées manuellement.
 Événements (Event Bubbling) : Le drag & drop SVG et les clics HTML s'entrechoquent. L'utilisation de evt.stopPropagation() est critique pour pouvoir cliquer sur un lien wiki sans déclencher le déplacement du bloc.
 Manipulation du DOM : La méthode innerHTML est préférable à document.createElementNS pour mettre à jour dynamiquement des listes HTML dans le SVG, sous peine de voir les éléments rendus invisibles par le parseur de certains navigateurs.
-
 📖 Syntaxe du Wiki
 == Mon Titre | Mon Sous-titre ==@Auteur: Nom@Statut: BrouillonBienvenue sur cette page. Voici un **texte en gras** et du *texte en italique*.- Liste item 1- Liste item 2Un bloc de code : `console.log('hello')`Un lien vers une autre page : [[Concepts]]Une image : !https://upload.wikimedia.org/wikipedia/commons/4/4f/SVG_Logo.svg!
 📁 Mode Hors-Ligne (Option A)
-Par défaut, Francoscopy charge ses librairies depuis un CDN (nécessite internet au premier chargement). 
-Pour une utilisation 100% hors-ligne : Téléchargez les 4 fichiers JS minifiés (marked.min.js, index.min.js, localforage.min.js, deep-diff.min.js). Placez-les dans le même dossier que francoscopy.svg.
-Dans le fichier SVG, commentez les lignes du CDN et décommentez les lignes locales. Tour simplement.
+Par défaut, Francoscopy charge ses librairies depuis un CDN (nécessite internet au premier chargement). Pour une utilisation 100% hors-ligne :
+
+Téléchargez les 4 fichiers JS minifiés (marked.min.js, index.min.js, localforage.min.js, deep-diff.min.js).
+Placez-les dans le même dossier que francoscopy.svg.
+Dans le fichier SVG, commentez les lignes du CDN et décommentez les lignes locales :
+xml
+
+<!-- Utilisation locale -->
+<script xlink:href="marked.min.js"></script>
+<script xlink:href="index.min.js"></script>
+<script xlink:href="localforage.min.js"></script>
+<script xlink:href="deep-diff.min.js"></script>
