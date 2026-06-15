@@ -1,9 +1,8 @@
 📝 Francoscopy
+
 Un Wiki personnel moderne, entièrement contenu dans un fichier SVG.
 
 Francoscopy est une application de prise de notes et de gestion de connaissances (PKM) qui repousse les limites du format SVG. Pas de serveur, pas de base de données, pas de build Webpack/Vite : juste un seul fichier .svg que vous ouvrez dans votre navigateur.
-
-LicenseFormatSize
 
 ✨ Fonctionnalités
 🗺️ Le Canvas Spatial
