@@ -1,4 +1,3 @@
-const mdContent = `
 # 📝 Francoscopy
 
 **Un Wiki personnel moderne, entièrement contenu dans un fichier SVG.**
@@ -119,12 +118,4 @@ Par défaut, Francoscopy charge ses librairies depuis un CDN (nécessite interne
 
 ## 📜 Licence
 
-Ce projet est sous licence MIT. N'hésitez pas à le fork, le modifier et l'améliorer !
-`;
-
-const blob = new Blob([mdContent], { type: 'text/markdown' });
-const url = URL.createObjectURL(blob);
-const a = document.createElement('a');
-a.href = url;
-a.download = 'README.md';
-a.click();
+Ce projet est sous licence MIT. Il est gratuit pour tout le monde. N'hésitez pas à le forker, le modifier et l'améliorer !
